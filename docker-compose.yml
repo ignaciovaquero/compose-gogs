@@ -1,0 +1,36 @@
+version: '3'
+services:
+  db:
+    image: postgres:9.6.3
+    container_name: database
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: g0gsp0stgr3s
+      POSTGRES_USER: gogs
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - vcs_net
+  gogs:
+    image: gogs/gogs:0.11.4
+    container_name: vcs
+    restart: always
+    depends_on:
+      - db
+    environment:
+      DB_TYPE: postgres
+      HOST: db:5432
+      NAME: gogs
+      USER: gogs
+      PASSWD: g0gsp0stgr3s
+    ports:
+      - "10022:22"
+      - "8080:8080"
+    volumes:
+      - /home/ivaquero/workspace/docker/gogs/data:/data
+    networks:
+      - vcs_net
+volumes:
+  db_data: {}
+networks:
+  vcs_net: {}
